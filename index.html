@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Night Studio — V4</title>
+<style>
+:root{--bg:#101323;--panel:#1b2038;--panel2:#252c49;--text:#f5f7ff;--muted:#aeb7d5;--accent:#7c5cff;--accent2:#36d6c5;--danger:#ff667d;--gold:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#20284b,var(--bg) 55%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:22px 18px 10px;text-align:center}h1{margin:0;font-size:clamp(1.8rem,4vw,3rem)}header p{color:var(--muted);margin:7px 0 0}
+main{max-width:1250px;margin:auto;padding:16px;display:grid;gap:16px}.panel{background:rgba(27,32,56,.95);border:1px solid #343b5e;border-radius:18px;padding:16px;box-shadow:0 12px 35px #0002}
+.topline{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}.teams{display:flex;gap:10px;flex-wrap:wrap}.team{background:var(--panel2);padding:10px 12px;border-radius:12px;min-width:155px}.team strong{display:block;font-size:1.15rem}.team small{color:var(--muted)}button,input,select,textarea{font:inherit}button{border:0;border-radius:10px;padding:9px 12px;background:#384263;color:white;cursor:pointer;font-weight:650}button:hover{filter:brightness(1.14)}button.primary{background:var(--accent)}button.good{background:#167c72}button.bad{background:#8e3347}button.ghost{background:transparent;border:1px solid #485174}.small{padding:6px 9px;font-size:.9rem}.muted{color:var(--muted)}.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.category{background:#30385d;border-radius:12px;padding:12px 8px;text-align:center;font-weight:800;min-height:64px;display:flex;align-items:center;justify-content:center}.cell{min-height:75px;background:linear-gradient(145deg,#6552dc,#4938a8);color:#fff;font-size:1.5rem;font-weight:900;border-radius:12px}.cell.used{background:#292e45;color:#727b9b;cursor:default}.section-title{margin:0 0 12px}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.timer{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.time{font-size:2rem;font-weight:900;font-variant-numeric:tabular-nums}.track{height:8px;background:#343b5e;border-radius:99px;overflow:hidden;flex:1;min-width:100px}.track>div{height:100%;width:100%;background:var(--accent2);transition:width .2s linear}.modal{position:fixed;inset:0;background:#080a13df;display:none;align-items:center;justify-content:center;padding:16px;z-index:5}.modal.open{display:flex}.dialog{width:min(850px,100%);max-height:92vh;overflow:auto;background:#1b2038;border:1px solid #485174;border-radius:20px;padding:22px;box-shadow:0 30px 100px #0008}.dialog h2{margin-top:0}.question{font-size:clamp(1.3rem,3vw,2rem);font-weight:800;white-space:pre-wrap;margin:12px 0}.answer{background:#202744;border-radius:12px;padding:14px;margin:12px 0;white-space:pre-wrap}.qimage{display:block;max-width:100%;max-height:340px;object-fit:contain;margin:14px auto;border-radius:12px;background:#11172a}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}.choice{padding:14px;text-align:left;border:1px solid #4b557c;background:#252c49;border-radius:12px}.choice.correct{outline:3px solid var(--accent2);background:#15534f}.choice.wrong{opacity:.55}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:.92rem;color:#c7cee8}.field input,.field select,.field textarea{width:100%;background:#10162a;color:white;border:1px solid #485174;border-radius:9px;padding:10px}.field textarea{min-height:84px;resize:vertical}.preview{max-width:100%;max-height:180px;object-fit:contain;border-radius:10px;display:none;background:#10162a}.notice{font-size:.9rem;color:var(--muted);line-height:1.5}.list{display:grid;gap:8px}.qrow{background:#202744;border-radius:10px;padding:10px;display:flex;justify-content:space-between;gap:12px;align-items:center}.qrow span{overflow-wrap:anywhere}.hidden{display:none!important}
+@media(max-width:700px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:1fr}.choices{grid-template-columns:1fr}.category{font-size:.95rem}.cell{min-height:60px}}
+
+/* V4 STUDIO — responsive blue/cyan redesign */
+:root{--bg:#071321;--panel:#0d2033;--panel2:#122c45;--text:#f0f9ff;--muted:#a1bad0;--accent:#348cff;--accent2:#4de2e7;--danger:#ff698a;--gold:#4de2e7}
+body{background:radial-gradient(ellipse 75% 40% at 70% -10%,#17496b 0%,transparent 80%),var(--bg);letter-spacing:.005em}
+header{max-width:1440px;margin:0 auto;padding:24px 22px 8px;display:flex;align-items:center;gap:13px;text-align:left}
+.brand-mark{width:47px;height:47px;border-radius:14px;background:linear-gradient(135deg,#338aff,#4de2e7);color:#071321;font-size:27px;font-weight:950;display:grid;place-items:center;box-shadow:0 10px 28px #1d83c644;flex-shrink:0}
+h1{font-size:clamp(1.35rem,2.7vw,2rem);letter-spacing:-.055em}h1 span{color:var(--accent2)}header p{font-size:.8rem;margin:2px 0 0}
+main{max-width:1440px;padding:16px 22px 35px;gap:14px;grid-template-columns:minmax(0,1fr) 310px;align-items:start}
+main>.panel{min-width:0;border:1px solid #24445e;background:linear-gradient(155deg,#0f2439,#0b1a2b);border-radius:16px;box-shadow:0 12px 35px #0002}
+main>.panel:nth-child(2){grid-column:1;grid-row:1/4}main>.panel:nth-child(1){grid-column:2;grid-row:1}main>.panel:nth-child(3){grid-column:2;grid-row:2}main>.panel:nth-child(4){grid-column:2;grid-row:3}main>.panel:nth-child(5){grid-column:1/-1;grid-row:4}
+.section-title{font-size:1.08rem;letter-spacing:-.025em;margin-bottom:5px}.muted,.notice{font-size:.79rem}
+button{background:#163653;border:1px solid #2c506d;border-radius:10px;padding:9px 12px;transition:background .15s,transform .15s}button:hover{background:#205074;filter:none;transform:translateY(-1px)}button.primary{background:#347ff0;border-color:#347ff0}button.good{background:#126b70;border-color:#228e92}button.bad{background:#77334a;border-color:#a24a65}button.ghost{border-color:#33536b}
+.board{gap:8px}.category{background:linear-gradient(140deg,#133f5b,#102d46);border:1px solid #28516d;border-radius:11px;min-height:61px;padding:10px 6px;font-size:clamp(.68rem,1.2vw,.86rem);text-transform:uppercase;letter-spacing:.055em;overflow-wrap:anywhere}
+.cell{min-height:68px;background:linear-gradient(155deg,#174e78,#123854);border:1px solid #2b6286;border-radius:10px;color:#5ae7f1;font-size:clamp(1.1rem,2.2vw,1.65rem);font-weight:900}.cell:hover{background:#1b6089}.cell.used{background:#0a1c2c;border-color:#19374b;color:#57738a}
+.teams{gap:8px}.team{min-width:0;background:#102d45;border:1px solid #244862;border-radius:11px;padding:10px}.team strong{font-size:1.05rem}.topline{gap:10px}.actions{gap:7px}.actions button{font-size:.82rem}
+.timer{gap:8px}.time{font-size:1.6rem;color:var(--accent2)}.track{height:6px;background:#1a3c53;min-width:55px}.track>div{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.dialog{background:#0c1e31;border:1px solid #345b76;border-radius:19px;padding:clamp(17px,3vw,30px);width:min(900px,100%)}.question{font-size:clamp(1.8rem,4.2vw,3.3rem);line-height:1.15;letter-spacing:-.04em;margin:25px 0;font-weight:850;overflow-wrap:anywhere}.answer{background:#0f3640;border:1px solid #227c83;color:#c6fffa;font-size:1.2rem}.qimage{max-height:38vh}.choices{gap:10px}.choice{background:#14324b;border-color:#2d5a78;font-size:clamp(.9rem,1.8vw,1.12rem);min-height:60px}.choice.correct{background:#0f4845;outline:2px solid #4de2e7}.field input,.field select,.field textarea{background:#081829;border-color:#335873}.qrow{background:#102a40;border:1px solid #23445c}
+@media(max-width:1050px){main{grid-template-columns:minmax(0,1fr) 255px;padding:12px}.board{gap:6px}.cell{min-height:58px}.category{min-height:56px}main>.panel{padding:12px}.timer{align-items:stretch}.track{flex-basis:100%}}
+@media(max-width:760px){header{padding:16px 12px 6px}main{grid-template-columns:1fr}main>.panel:nth-child(2){grid-column:1;grid-row:1}main>.panel:nth-child(1){grid-column:1;grid-row:2}main>.panel:nth-child(3){grid-column:1;grid-row:3}main>.panel:nth-child(4){grid-column:1;grid-row:4}main>.panel:nth-child(5){grid-column:1;grid-row:5}.board{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px}.category{font-size:.65rem;min-height:51px;padding:8px 2px}.cell{font-size:1.15rem;min-height:50px;padding:8px 2px}.formgrid{grid-template-columns:1fr}.choices{grid-template-columns:1fr}.question{font-size:clamp(1.65rem,6vw,2.8rem)}.team{min-width:130px}}
+@media(max-width:410px){header p{font-size:.7rem}.brand-mark{width:40px;height:40px}.board{gap:4px}.cell{min-height:45px;font-size:1rem}.category{font-size:.57rem;letter-spacing:0}.dialog{padding:14px}}
+/* Alle Kategorien bleiben in einer einzigen Zeile; auf schmalen Bildschirmen horizontal scrollen. */
+.board-scroll{width:100%;overflow-x:auto;overscroll-behavior-inline:contain;padding-bottom:7px;scrollbar-color:#2888ba #10263c;scrollbar-width:thin}
+.board{width:100%;min-width:max-content;align-items:stretch}
+.board .category{min-width:112px}
+.board .cell{min-width:112px}
+@media(max-width:760px){.board{grid-template-columns:unset!important}.board .category,.board .cell{min-width:112px}}
+
+/* V4.1 — kompakte Bildschirmansicht ohne horizontales Scrollen */
+html,body{min-width:0}
+header{padding:10px 16px 4px}
+.brand-mark{width:35px;height:35px;font-size:21px;border-radius:10px}
+h1{font-size:1.35rem}header p{font-size:.69rem}
+main{max-width:1600px;padding:8px 14px 16px;gap:9px;grid-template-columns:minmax(0,1fr) 240px}
+main>.panel{padding:10px;border-radius:12px}
+.section-title{font-size:.98rem;margin:0 0 3px}
+.board-scroll{overflow-x:visible;padding-bottom:0;width:100%}
+.board{min-width:0!important;width:100%;gap:5px!important;margin-top:9px!important}
+.board .category{min-width:0!important;min-height:43px;padding:5px 2px;font-size:clamp(.52rem,.85vw,.77rem);letter-spacing:0;line-height:1.15;border-radius:7px;word-break:break-word}
+.board .cell{min-width:0!important;min-height:clamp(34px,5.7vh,54px);padding:3px 0;font-size:clamp(.84rem,1.45vw,1.32rem);border-radius:7px}
+.topline{gap:5px}.topline .actions{gap:4px}
+.actions button,button.small{padding:5px 7px;font-size:.72rem;border-radius:7px}
+.teams{gap:5px}.team{padding:6px 8px;border-radius:8px}.team strong{font-size:.88rem}
+.time{font-size:1.35rem}.timer{gap:5px}.track{min-width:30px}
+main>.panel:nth-child(5){grid-column:1/-1;grid-row:4;padding:7px 10px}
+main>.panel:nth-child(5) .list,main>.panel:nth-child(5) .notice{display:none}
+main>.panel:nth-child(5){cursor:pointer}
+main>.panel:nth-child(5).expanded .list{display:grid;max-height:40vh;overflow:auto;margin-top:8px}
+main>.panel:nth-child(5).expanded .notice{display:block}
+@media(max-width:1050px){main{grid-template-columns:minmax(0,1fr) 210px;padding:7px 9px}main>.panel{padding:8px}.board .category{min-height:39px}.board .cell{min-height:37px}}
+@media(max-width:760px){main{grid-template-columns:minmax(0,1fr)}main>.panel:nth-child(2){grid-column:1;grid-row:1}main>.panel:nth-child(1){grid-column:1;grid-row:2}main>.panel:nth-child(3){grid-column:1;grid-row:3}main>.panel:nth-child(4){grid-column:1;grid-row:4}main>.panel:nth-child(5){grid-column:1;grid-row:5}.board{grid-template-columns:unset!important}.board .category{font-size:clamp(.48rem,1.8vw,.72rem);min-height:36px}.board .cell{font-size:clamp(.78rem,2.8vw,1.15rem);min-height:36px}.team{min-width:0}.teams{flex-wrap:wrap}}
+@media(max-width:410px){.board{gap:3px!important}.board .category{font-size:.5rem;padding:3px 1px}.board .cell{font-size:.8rem;min-height:33px;padding:2px 0}main{padding:5px}.topline .actions button{font-size:.67rem;padding:5px}}
+.choice.selected{background:#14547b!important;border:2px solid #56ddff!important;box-shadow:0 0 0 2px #56ddff44 inset;color:#fff}
+.choice.correct{background:#0f5743!important;border:2px solid #60e6aa!important;outline:2px solid #60e6aa}
+.choice.wrong{background:#632b3b!important;border:2px solid #ff7999!important;opacity:1}
+.choice:disabled{cursor:default}
+
+/* Live buzzer */
+.buzzer-panel{border:1px solid #28617d;background:linear-gradient(120deg,#132f4b,#14243d);border-radius:14px;padding:12px;margin-top:10px}.buzzer-status{font-weight:800;color:#66e2ef;margin:8px 0}.buzzer-buttons{display:flex;gap:8px;flex-wrap:wrap}.buzzer-buttons button{background:#16617c}.buzzer-buttons .bad{background:#803e52}.buzzer-link{width:min(100%,600px);background:#0c182c;border:1px solid #3a6078;color:white;padding:9px;border-radius:9px}.player-overlay.hidden{display:none!important}.player-overlay{position:fixed;inset:0;z-index:9999;background:radial-gradient(circle at top,#183c5a,#0b1323 70%);display:flex;align-items:center;justify-content:center;padding:16px}.player-card{width:min(480px,100%);background:#182b44;border:1px solid #32627c;border-radius:20px;padding:24px;text-align:center;box-shadow:0 20px 65px #0009}.player-card h1{font-size:30px}.player-card select,.player-card input{width:100%;padding:12px;margin:10px 0;background:#0c1c30;color:#fff;border:1px solid #3b6981;border-radius:10px}.player-buzz{font-size:30px;width:100%;padding:36px 10px;margin:18px 0;background:linear-gradient(130deg,#0879b8,#2ad2d5);color:#041420;border-radius:20px;font-weight:900}.player-buzz:disabled{background:#33445a;color:#9faebf;cursor:default}.player-note{font-size:13px;color:#aec8d9}.buzzer-panel .notice{overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header><div class="brand-mark">Q</div><div><h1>Quiz Night <span>Studio</span></h1><p>Dein Quizabend — modern, schnell und übersichtlich</p></div></header>
+<main>
+<section class="panel" id="liveBuzzerPanel"><div class="topline"><div><h2 class="section-title">🔔 Live-Buzzer</h2><div class="muted">Spieler buzzern über einen eigenen Link auf ihrem Handy oder PC.</div></div><button class="primary" id="startBuzzerBtn" onclick="startLiveBuzzer()">Live-Raum starten</button></div><div class="buzzer-panel"><div class="buzzer-status" id="buzzerStatus" aria-live="polite">Noch kein Live-Raum gestartet.</div><div id="buzzerShare" class="hidden"><div class="notice">Spieler-Link (Quiz muss über HTTPS online veröffentlicht sein):</div><div class="buzzer-buttons"><input class="buzzer-link" id="buzzerUrl" readonly aria-label="Spieler-Link"><button onclick="copyBuzzerLink()">Link kopieren</button></div></div><div class="buzzer-buttons" style="margin-top:10px"><button id="buzzerWrong" class="bad" onclick="markBuzzerWrong()" disabled>✕ Falsch – wieder freigeben</button><button id="buzzerRight" class="good" onclick="markBuzzerRight()" disabled>✓ Richtig – Runde beenden</button><button onclick="resetLiveBuzz()">Buzzer freigeben</button></div><p class="notice">Bei einer falschen Antwort wird das aktuelle Team für diese Frage gesperrt. Andere Teams dürfen erneut buzzern. Nur der Quizmaster vergibt Punkte. Der Quizmaster muss online bleiben.</p></div></section>
+<section class="panel">
+ <div class="topline"><div><h2 class="section-title">Teams</h2><div id="teams" class="teams"></div></div><div class="actions"><button class="primary" onclick="addTeam()">＋ Team</button><button class="ghost" onclick="renameTeams()">Teams umbenennen</button></div></div>
+</section>
+<section class="panel">
+ <div class="topline"><div><h2 class="section-title">Spielbrett</h2><div class="muted">Wähle eine Punktzahl, um die Frage zu öffnen.</div></div><div class="actions"><button onclick="openEditor()">＋ Frage erstellen</button><button class="ghost" onclick="manageQuestions()">Fragen verwalten</button><button class="ghost" onclick="exportQuestions()">Export</button><button class="ghost" onclick="document.getElementById('importFile').click()">Import</button><input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importQuestions(event)"></div></div>
+ <div class="board-scroll" aria-label="Spielbrett mit allen Kategorien"><div id="board" class="board" style="margin-top:14px"></div></div>
+</section>
+<section class="panel">
+ <div class="topline"><div><h2 class="section-title">30-Sekunden-Timer</h2><div class="muted">Der Timer läuft unabhängig von der geöffneten Frage.</div></div><div class="timer"><span id="time" class="time">00:30</span><div class="track"><div id="timerBar"></div></div><button class="good" onclick="startTimer()">Start</button><button onclick="pauseTimer()">Pause</button><button class="ghost" onclick="resetTimer()">Zurücksetzen</button></div></div>
+</section>
+<section class="panel"><div class="topline"><div><h2 class="section-title">Punkte & Spielstand</h2><div class="muted">Punkte in 50er-Schritten vergeben.</div></div><button class="bad" onclick="resetRound()">Runde zurücksetzen</button></div></section>
+<section class="panel" id="questionArchive" onclick="if(event.target===this || event.target.closest('.section-title'))this.classList.toggle('expanded')"><h2 class="section-title">Fragenliste anzeigen / ausblenden ▾</h2><div id="questionList" class="list"></div><p class="notice">Die Daten werden in diesem Browser gespeichert. Bilder werden lokal im Browser abgelegt und nicht hochgeladen. Für einen anderen Computer kannst du die Fragen als JSON exportieren und wieder importieren.</p></section>
+</main>
+
+<div id="questionModal" class="modal" onclick="if(event.target===this)closeQuestion()"><div class="dialog">
+ <div class="topline"><span id="questionMeta" class="muted"></span><button class="ghost" onclick="closeQuestion()">Schließen ✕</button></div>
+ <div id="questionText" class="question"></div><img id="questionImage" class="qimage hidden" alt="Bild zur Frage">
+ <div class="actions"><button id="showChoicesBtn" class="primary hidden" onclick="showChoices()">Auswahlmöglichkeiten</button></div>
+ <div id="choiceArea" class="choices hidden"></div>
+ <div id="answerArea" class="answer hidden"></div>
+ <div class="actions"><button class="primary" id="revealBtn" onclick="revealAnswer()">Antwort anzeigen</button><button onclick="editCurrent()">Frage bearbeiten</button></div>
+ <hr style="border-color:#343b5e;margin:18px 0">
+ <div class="actions"><strong>Punkte vergeben:</strong><select id="scoreTeam"></select><button class="good" onclick="changeScore(1)">＋ Punkte</button><button class="bad" onclick="changeScore(-1)">− Punkte</button><span id="scoreAmount" class="muted"></span></div>
+</div></div>
+
+<div id="editorModal" class="modal" onclick="if(event.target===this)closeEditor()"><div class="dialog">
+ <div class="topline"><h2 id="editorTitle">Frage erstellen</h2><button class="ghost" onclick="closeEditor()">Schließen ✕</button></div>
+ <div class="formgrid">
+  <div class="field"><label for="fCategory">Kategorie</label><input id="fCategory" maxlength="60" placeholder="z. B. Länder & Flaggen"></div>
+  <div class="field"><label for="fPoints">Punktwert</label><select id="fPoints"></select></div>
+  <div class="field full"><label for="fQuestion">Frage</label><textarea id="fQuestion" placeholder="Frage eingeben …"></textarea></div>
+  <div class="field full"><label for="fImage">Bild anfügen (optional)</label><input id="fImage" type="file" accept="image/*" onchange="previewImage(event)"><img id="imagePreview" class="preview" alt="Bildvorschau"><div class="actions"><button class="small ghost" onclick="clearImage()">Bild entfernen</button><span class="notice">Zum Beispiel eine Flagge, ein Logo oder ein Foto. Das Bild bleibt auf diesem Gerät.</span></div></div>
+  <div class="field full"><label><input id="fMultiple" type="checkbox" onchange="toggleChoiceFields()" style="width:auto"> Bei dieser Frage 4 Auswahlmöglichkeiten anzeigen</label></div>
+  <div id="choiceFields" class="field full hidden"><div class="formgrid">
+   <div class="field"><label for="fChoice0">Auswahl A</label><input id="fChoice0" placeholder="Option A"></div>
+   <div class="field"><label for="fChoice1">Auswahl B</label><input id="fChoice1" placeholder="Option B"></div>
+   <div class="field"><label for="fChoice2">Auswahl C</label><input id="fChoice2" placeholder="Option C"></div>
+   <div class="field"><label for="fChoice3">Auswahl D</label><input id="fChoice3" placeholder="Option D"></div>
+   <div class="field full"><label for="fCorrect">Richtige Auswahl</label><select id="fCorrect"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>
+  </div></div>
+  <div class="field full"><label for="fAnswer">Richtige Antwort / Erklärung</label><textarea id="fAnswer" placeholder="Die richtige Antwort …"></textarea></div>
+ </div>
+ <div class="actions" style="margin-top:16px"><button class="primary" onclick="saveQuestion()">Speichern</button><button class="ghost" onclick="closeEditor()">Abbrechen</button></div>
+ <p class="notice">Tipp: Wenn du Multiple Choice aktivierst, fülle alle vier Optionen aus und wähle die richtige aus. Die richtige Antwort wird erst beim Auflösen markiert.</p>
+</div></div>
+
+<div id="manageModal" class="modal" onclick="if(event.target===this)closeManage()"><div class="dialog"><div class="topline"><h2>Fragen verwalten</h2><button class="ghost" onclick="closeManage()">Schließen ✕</button></div><div id="manageList" class="list"></div></div></div>
+<script>
+const defaultQuestions=[
+{category:"Länder & Flaggen",points:100,question:"Welche Flagge zeigt drei waagerechte Streifen in Schwarz, Rot und Gold?",answer:"Deutschland",choices:["Belgien","Deutschland","Österreich","Niederlande"],correct:1,multiple:true,image:null},
+{category:"Länder & Flaggen",points:200,question:"Welche Stadt ist die Hauptstadt von Australien?",answer:"Canberra",choices:["Sydney","Melbourne","Canberra","Perth"],correct:2,multiple:true,image:null},
+{category:"Länder & Flaggen",points:300,question:"Welches Land hat diese Flagge?",answer:"Hier kann eine Flagge als Bild angefügt werden.",choices:[],correct:0,multiple:false,image:null},
+{category:"Wissen",points:100,question:"Wie viele Minuten hat eine Stunde?",answer:"60 Minuten",choices:["30","45","60","90"],correct:2,multiple:true,image:null},
+{category:"Wissen",points:200,question:"Welcher Planet ist als Roter Planet bekannt?",answer:"Mars",choices:[],correct:0,multiple:false,image:null},
+{category:"Wissen",points:300,question:"Wie heißt der größte Ozean der Erde?",answer:"Pazifischer Ozean",choices:[],correct:0,multiple:false,image:null},
+{category:"Film & Serien",points:100,question:"Wie heißt die Zauberschule in Harry Potter?",answer:"Hogwarts",choices:[],correct:0,multiple:false,image:null},
+{category:"Film & Serien",points:200,question:"Wie heißt der Cowboy aus Toy Story?",answer:"Woody",choices:[],correct:0,multiple:false,image:null},
+{category:"Film & Serien",points:300,question:"In welcher Filmreihe kommt der Satz „Möge die Macht mit dir sein“ vor?",answer:"Star Wars",choices:[],correct:0,multiple:false,image:null},
+{category:"Musik",points:100,question:"Wie viele Saiten hat eine klassische Gitarre?",answer:"Sechs",choices:[],correct:0,multiple:false,image:null},
+{category:"Musik",points:200,question:"Welche Band veröffentlichte „Bohemian Rhapsody“?",answer:"Queen",choices:[],correct:0,multiple:false,image:null},
+{category:"Musik",points:300,question:"Welches Instrument hat üblicherweise 88 Tasten?",answer:"Klavier",choices:[],correct:0,multiple:false,image:null},
+{category:"Natur",points:100,question:"Welches Tier ist das größte Säugetier der Welt?",answer:"Blauwal",choices:[],correct:0,multiple:false,image:null},
+{category:"Natur",points:200,question:"Wie nennt man den Prozess, bei dem Pflanzen Licht in Energie umwandeln?",answer:"Photosynthese",choices:[],correct:0,multiple:false,image:null},
+{category:"Natur",points:300,question:"Wie viele Beine hat eine Spinne?",answer:"Acht",choices:[],correct:0,multiple:false,image:null},
+{category:"Geschichte",points:100,question:"In welchem Jahr fiel die Berliner Mauer?",answer:"1989",choices:[],correct:0,multiple:false,image:null},
+{category:"Geschichte",points:200,question:"Wie hieß das Schiff, mit dem Charles Darwin seine berühmte Reise unternahm?",answer:"HMS Beagle",choices:[],correct:0,multiple:false,image:null},
+{category:"Geschichte",points:300,question:"In welchem Land begannen die Olympischen Spiele der Antike?",answer:"Griechenland",choices:[],correct:0,multiple:false,image:null},
+{category:"Gaming",points:100,question:"Wie heißt der Klempner von Nintendo?",answer:"Mario",choices:[],correct:0,multiple:false,image:null},
+{category:"Gaming",points:200,question:"In welchem Spiel baut man mit Blöcken und überlebt gegen Monster?",answer:"Minecraft",choices:[],correct:0,multiple:false,image:null},
+{category:"Gaming",points:300,question:"Wie heißt die Prinzessin, die Mario oft rettet?",answer:"Peach",choices:[],correct:0,multiple:false,image:null},
+{category:"Essen & Trinken",points:100,question:"Aus welchem Land stammt Sushi ursprünglich?",answer:"Japan",choices:[],correct:0,multiple:false,image:null},
+{category:"Essen & Trinken",points:200,question:"Welche Frucht ist Hauptzutat von Guacamole?",answer:"Avocado",choices:[],correct:0,multiple:false,image:null},
+{category:"Essen & Trinken",points:300,question:"Welche Gewürzmischung ist typisch für Lebkuchen?",answer:"Lebkuchengewürz (z. B. Zimt, Nelken, Kardamom)",choices:[],correct:0,multiple:false,image:null}
+];
+const clone=x=>JSON.parse(JSON.stringify(x));
+let state={questions:clone(defaultQuestions),teams:[{name:"Team 1",score:0},{name:"Team 2",score:0}],used:[],current:null,editing:null,imageData:null};
+try{const saved=localStorage.getItem("quizNightProV3");if(saved){const parsed=JSON.parse(saved);state={...state,...parsed};}}catch(e){}
+function persist(){try{localStorage.setItem("quizNightProV3",JSON.stringify(state));}catch(e){alert("Der Browser-Speicher ist voll. Bitte entferne ein oder mehrere große Bilder oder exportiere deine Fragen.");}}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function categories(){return [...new Set(state.questions.map(q=>q.category||"Allgemein"))];}
+function render(){renderTeams();renderBoard();renderQuestionList();persist();}
+function renderTeams(){document.getElementById("teams").innerHTML=state.teams.map((t,i)=>`<div class="team"><small>${escapeHtml(t.name)}</small><strong>${t.score} Punkte</strong><div class="actions" style="margin-top:6px"><button class="small" onclick="quickScore(${i},50)">+50</button><button class="small" onclick="quickScore(${i},-50)">−50</button></div></div>`).join("");const sel=document.getElementById("scoreTeam");const old=sel.value;sel.innerHTML=state.teams.map((t,i)=>`<option value="${i}">${escapeHtml(t.name)}</option>`).join("");if(state.teams[old])sel.value=old;}
+function renderBoard(){const cats=categories();let html=cats.map(c=>`<div class="category">${escapeHtml(c)}</div>`).join("");const maxRows=Math.max(1,...cats.map(c=>state.questions.filter(q=>q.category===c).length));for(let r=0;r<maxRows;r++)for(const c of cats){const q=state.questions.filter(x=>x.category===c)[r];if(!q){html+='<div></div>';continue;}const idx=state.questions.indexOf(q),used=state.used.includes(idx);html+=`<button class="cell ${used?'used':''}" ${used?'disabled':''} onclick="openQuestion(${idx})">${used?'✓':q.points}</button>`;}document.getElementById("board").style.gridTemplateColumns=`repeat(${cats.length},minmax(0,1fr))`;document.getElementById("board").innerHTML=html;}
+function renderQuestionList(){document.getElementById("questionList").innerHTML=state.questions.map((q,i)=>`<div class="qrow"><span><strong>${escapeHtml(q.category)}</strong> · ${q.points} Pkt. — ${escapeHtml(q.question)} ${q.image?'🖼️':''} ${q.multiple?'🔠':''}</span><button class="small" onclick="editQuestion(${i})">Bearbeiten</button></div>`).join("");}
+function addTeam(){const name=prompt("Name des neuen Teams:",`Team ${state.teams.length+1}`);if(name&&name.trim()){state.teams.push({name:name.trim(),score:0});render();}}
+function renameTeams(){state.teams.forEach(t=>{const n=prompt("Teamname:",t.name);if(n&&n.trim())t.name=n.trim();});render();}
+function quickScore(i,n){state.teams[i].score+=n;renderTeams();persist();}
+function resetRound(){if(!confirm("Spielstand und verwendete Fragen zurücksetzen?"))return;state.used=[];state.teams.forEach(t=>t.score=0);render();}
+function openQuestion(i){state.current=i;const q=state.questions[i];document.getElementById("questionMeta").textContent=`${q.category} · ${q.points} Punkte`;document.getElementById("questionText").textContent=q.question;const img=document.getElementById("questionImage");if(q.image){img.src=q.image;img.classList.remove("hidden");}else{img.removeAttribute("src");img.classList.add("hidden");}document.getElementById("answerArea").classList.add("hidden");document.getElementById("answerArea").textContent="";document.getElementById("revealBtn").classList.remove("hidden");const area=document.getElementById("choiceArea");const choicesBtn=document.getElementById("showChoicesBtn");area.classList.add("hidden");choicesBtn.classList.toggle("hidden",!(q.multiple&&q.choices?.length===4));if(q.multiple&&q.choices?.length===4){area.innerHTML=q.choices.map((c,j)=>`<button class="choice" data-choice="${j}" onclick="chooseAnswer(${j})"><strong>${"ABCD"[j]}.</strong> ${escapeHtml(c)}</button>`).join("");}else{area.classList.add("hidden");area.innerHTML="";}document.getElementById("scoreAmount").textContent=`${q.points} Punkte`;document.getElementById("questionModal").classList.add("open");resetTimer();startTimer();}
+function showChoices(){document.getElementById("choiceArea").classList.remove("hidden");document.getElementById("showChoicesBtn").classList.add("hidden");}
+function chooseAnswer(j){
+ const answerShown=!document.getElementById("answerArea").classList.contains("hidden");
+ if(answerShown)return;
+ document.querySelectorAll("#choiceArea .choice").forEach((el,i)=>{
+   el.classList.toggle("selected",i===j);
+   el.setAttribute("aria-pressed",String(i===j));
+ });
+}
+function revealAnswer(){
+ const q=state.questions[state.current],a=document.getElementById("answerArea");
+ a.textContent="Richtige Antwort: "+q.answer;
+ a.classList.remove("hidden");
+ document.getElementById("revealBtn").classList.add("hidden");
+ if(q.multiple){
+   document.querySelectorAll("#choiceArea .choice").forEach((el,i)=>{
+     const selected=el.classList.contains("selected");
+     el.classList.toggle("correct",i===Number(q.correct));
+     el.classList.toggle("wrong",selected&&i!==Number(q.correct));
+     el.disabled=true;
+   });
+ }
+}
+function changeScore(mult){const team=Number(document.getElementById("scoreTeam").value);if(!state.teams[team])return;state.teams[team].score+=state.questions[state.current].points*mult;renderTeams();persist();}
+function closeQuestion(){pauseTimer();document.getElementById("questionModal").classList.remove("open");if(state.current!==null&&!state.used.includes(state.current)){state.used.push(state.current);renderBoard();persist();}}
+function openEditor(){state.editing=null;state.imageData=null;document.getElementById("editorTitle").textContent="Frage erstellen";["fCategory","fQuestion","fAnswer","fChoice0","fChoice1","fChoice2","fChoice3"].forEach(id=>document.getElementById(id).value="");document.getElementById("fMultiple").checked=false;document.getElementById("fCorrect").value="0";document.getElementById("fPoints").innerHTML=Array.from({length:10},(_,i)=>`<option value="${(i+1)*50}">${(i+1)*50} Punkte</option>`).join("");document.getElementById("fPoints").value="100";document.getElementById("fImage").value="";document.getElementById("imagePreview").style.display="none";toggleChoiceFields();document.getElementById("editorModal").classList.add("open");}
+function editQuestion(i){state.editing=i;const q=state.questions[i];state.imageData=q.image||null;document.getElementById("editorTitle").textContent="Frage bearbeiten";document.getElementById("fCategory").value=q.category;document.getElementById("fQuestion").value=q.question;document.getElementById("fAnswer").value=q.answer;document.getElementById("fPoints").innerHTML=Array.from({length:10},(_,j)=>`<option value="${(j+1)*50}">${(j+1)*50} Punkte</option>`).join("");document.getElementById("fPoints").value=String(q.points);document.getElementById("fMultiple").checked=!!q.multiple;for(let j=0;j<4;j++)document.getElementById("fChoice"+j).value=q.choices?.[j]||"";document.getElementById("fCorrect").value=String(q.correct||0);document.getElementById("fImage").value="";const p=document.getElementById("imagePreview");if(state.imageData){p.src=state.imageData;p.style.display="block";}else p.style.display="none";toggleChoiceFields();document.getElementById("editorModal").classList.add("open");}
+function editCurrent(){const i=state.current;closeQuestion();editQuestion(i);}
+function previewImage(event){const file=event.target.files?.[0];if(!file)return;if(!file.type.startsWith("image/")){alert("Bitte wähle eine Bilddatei aus.");return;}if(file.size>3*1024*1024){alert("Das Bild ist größer als 3 MB. Bitte verkleinere es vor dem Hinzufügen.");event.target.value="";return;}const reader=new FileReader();reader.onload=()=>{state.imageData=reader.result;const p=document.getElementById("imagePreview");p.src=state.imageData;p.style.display="block";};reader.readAsDataURL(file);}
+function clearImage(){state.imageData=null;document.getElementById("fImage").value="";document.getElementById("imagePreview").style.display="none";}
+function toggleChoiceFields(){document.getElementById("choiceFields").classList.toggle("hidden",!document.getElementById("fMultiple").checked);}
+function saveQuestion(){const category=document.getElementById("fCategory").value.trim()||"Allgemein",question=document.getElementById("fQuestion").value.trim(),answer=document.getElementById("fAnswer").value.trim(),multiple=document.getElementById("fMultiple").checked,choices=[0,1,2,3].map(i=>document.getElementById("fChoice"+i).value.trim());if(!question||!answer){alert("Bitte gib eine Frage und die richtige Antwort ein.");return;}if(multiple&&choices.some(x=>!x)){alert("Bitte fülle alle vier Auswahlmöglichkeiten aus.");return;}const q={category,points:Number(document.getElementById("fPoints").value),question,answer,multiple,choices:multiple?choices:[],correct:Number(document.getElementById("fCorrect").value),image:state.imageData};if(state.editing===null){state.questions.push(q);}else{state.questions[state.editing]=q;}closeEditor();render();}
+function closeEditor(){document.getElementById("editorModal").classList.remove("open");}
+function manageQuestions(){document.getElementById("manageList").innerHTML=state.questions.map((q,i)=>`<div class="qrow"><span>${i+1}. <strong>${escapeHtml(q.category)}</strong> · ${q.points} Pkt. — ${escapeHtml(q.question)}</span><div class="actions"><button class="small" onclick="closeManage();editQuestion(${i})">Bearbeiten</button><button class="small bad" onclick="deleteQuestion(${i})">Löschen</button></div></div>`).join("");document.getElementById("manageModal").classList.add("open");}
+function deleteQuestion(i){if(!confirm("Diese Frage wirklich löschen?"))return;state.questions.splice(i,1);state.used=state.used.filter(n=>n!==i).map(n=>n>i?n-1:n);manageQuestions();render();}
+function closeManage(){document.getElementById("manageModal").classList.remove("open");}
+function exportQuestions(){const data={questions:state.questions};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="quiz-fragen.json";a.click();URL.revokeObjectURL(a.href);}
+function importQuestions(event){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);const qs=Array.isArray(data)?data:data.questions;if(!Array.isArray(qs))throw new Error();if(confirm(`${qs.length} Fragen importieren und die aktuellen Fragen ersetzen?`)){state.questions=qs.map(q=>({...q,category:q.category||"Allgemein",points:Number(q.points)||100,choices:q.choices||[],multiple:!!q.multiple,image:q.image||null}));state.used=[];render();}}catch(e){alert("Die Datei konnte nicht als Quiz-Fragenliste gelesen werden.");}event.target.value="";};reader.readAsText(file);}
+let timerSeconds=30,timerInterval=null;function drawTimer(){document.getElementById("time").textContent=`00:${String(timerSeconds).padStart(2,"0")}`;document.getElementById("timerBar").style.width=(timerSeconds/30*100)+"%";document.getElementById("timerBar").style.background=timerSeconds<=5?"#ff667d":"#36d6c5";}
+function startTimer(){if(timerInterval)return;timerInterval=setInterval(()=>{timerSeconds--;drawTimer();if(timerSeconds<=0){pauseTimer();timerSeconds=0;drawTimer();try{const C=window.AudioContext||window.webkitAudioContext;if(C){const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();o.stop(c.currentTime+.35);}}catch(e){}}},1000);}
+function pauseTimer(){clearInterval(timerInterval);timerInterval=null;}function resetTimer(){pauseTimer();timerSeconds=30;drawTimer();}
+render();drawTimer();
+</script>
+<div id="playerOverlay" class="player-overlay hidden"><div class="player-card"><h1>🔔 Quiz-Buzzer</h1><p class="player-note">Verbinde dich mit dem Quizmaster und wähle dein Team.</p><input id="playerName" maxlength="32" placeholder="Dein Name (optional)"><select id="playerTeam"></select><button class="primary" id="joinBuzzerBtn" onclick="joinLiveBuzzer()">Verbinden</button><div class="buzzer-status" id="playerStatus" aria-live="polite">Bereit</div><button class="player-buzz" id="playerBuzzBtn" onclick="sendLiveBuzz()" disabled>BUZZERN!</button><p class="player-note">Nur der erste gültige Buzzer zählt. Bei einer falschen Antwort dürfen andere Teams erneut buzzern.</p></div></div>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<script>
+// Live-Buzzer: PeerJS Cloud Signaling + WebRTC data channels; host-authoritative locking.
+let livePeer=null,liveConnections=new Map(),liveRoom=null,liveWinner=null,liveExcluded=new Set(),liveRound=0,liveClosed=false;
+let playerConn=null,playerJoined=false,playerTeamIndex=-1,playerState=null;
+const roomParams=new URLSearchParams(location.search);
+const isPlayerMode=roomParams.get('role')==='player'&&!!roomParams.get('room');
+const liveStatus=(s)=>{const e=document.getElementById('buzzerStatus');if(e)e.textContent=s};
+function peerReady(){return typeof Peer!=='undefined'}
+function roomSnapshot(){return {type:'state',round:liveRound,teams:state.teams.map((t,i)=>({id:i,name:t.name})),winner:liveWinner,excluded:[...liveExcluded],closed:liveClosed,questionOpen:state.current!==null};}
+function broadcastLive(){const snap=roomSnapshot();for(const c of liveConnections.values())if(c.open)try{c.send(snap)}catch(e){};updateLiveControls();}
+function updateLiveControls(){const locked=!!liveWinner;document.getElementById('buzzerWrong').disabled=!locked;document.getElementById('buzzerRight').disabled=!locked;const names=liveConnections.size;liveStatus(!liveRoom?'Noch kein Live-Raum gestartet.':liveWinner?`🔔 ${liveWinner.name} (${state.teams[liveWinner.team]?.name||'Team'}) war zuerst! · ${names} verbunden`:liveClosed?`Runde beendet · ${names} verbunden`:state.current===null?`Verbunden: ${names} · Öffne eine Frage, um den Buzzer freizugeben.`:`🟢 Buzzer frei · ${names} verbunden · ${liveExcluded.size} Team(s) gesperrt`)}
+function startLiveBuzzer(){if(isPlayerMode)return;if(!peerReady()){liveStatus('PeerJS konnte nicht geladen werden. Bitte Internetverbindung prüfen.');return}if(livePeer){liveStatus('Live-Raum läuft bereits.');return}liveRoom='qn-'+Array.from(crypto.getRandomValues(new Uint8Array(12)),n=>n.toString(16).padStart(2,'0')).join('');liveStatus('Verbindung wird aufgebaut …');livePeer=new Peer(liveRoom,{debug:0});livePeer.on('open',()=>{document.getElementById('buzzerShare').classList.remove('hidden');const u=new URL(location.href);u.searchParams.set('role','player');u.searchParams.set('room',liveRoom);document.getElementById('buzzerUrl').value=u.href;updateLiveControls();if(location.protocol==='file:')liveStatus('Raum läuft, aber der file://-Link ist nicht für andere Geräte nutzbar. Bitte Quiz per HTTPS hosten.');});livePeer.on('connection',c=>{liveConnections.set(c.peer,c);c.on('open',()=>{c.send(roomSnapshot());updateLiveControls()});c.on('data',data=>handleLiveMessage(c,data));c.on('close',()=>{liveConnections.delete(c.peer);updateLiveControls()});c.on('error',()=>{liveConnections.delete(c.peer);updateLiveControls()})});livePeer.on('error',e=>{liveStatus('Verbindungsfehler: '+e.type);if(!livePeer?.open){livePeer?.destroy();livePeer=null}});livePeer.on('disconnected',()=>liveStatus('Verbindung zum Vermittlungsserver unterbrochen. Wiederverbindung läuft …'))}
+function handleLiveMessage(c,d){if(!d||typeof d!=='object')return;if(d.type==='buzz'){const team=Number(d.team);if(!Number.isInteger(team)||team<0||team>=state.teams.length||state.current===null||liveWinner||liveClosed||liveExcluded.has(team))return;liveWinner={team,name:String(d.name||'Spieler').slice(0,32),peer:c.peer};broadcastLive()}else if(d.type==='hello'){c.send(roomSnapshot())}}
+function markBuzzerWrong(){if(!liveWinner)return;liveExcluded.add(liveWinner.team);liveWinner=null;broadcastLive()}
+function markBuzzerRight(){if(!liveWinner)return;liveClosed=true;broadcastLive()}
+function resetLiveBuzz(){liveRound++;liveWinner=null;liveExcluded.clear();liveClosed=false;broadcastLive()}
+async function copyBuzzerLink(){const v=document.getElementById('buzzerUrl').value;if(!v)return;try{await navigator.clipboard.writeText(v);liveStatus('Spieler-Link kopiert!')}catch(e){document.getElementById('buzzerUrl').select();liveStatus('Link markiert – bitte manuell kopieren.')}}
+function initPlayerMode(){document.getElementById('playerOverlay').classList.remove('hidden');document.getElementById('playerStatus').textContent='Bitte Team wählen und verbinden.';document.title='Quiz Night – Live-Buzzer';document.getElementById('playerTeam').innerHTML='<option value="">Warte auf Teamliste …</option>';if(!peerReady()){document.getElementById('playerStatus').textContent='Verbindungsskript nicht geladen. Internet prüfen.';return}livePeer=new Peer();livePeer.on('open',()=>{playerConn=livePeer.connect(roomParams.get('room'),{reliable:true});playerConn.on('open',()=>{document.getElementById('playerStatus').textContent='Verbunden – Team auswählen.';playerConn.send({type:'hello'})});playerConn.on('data',d=>{if(d.type==='state'){playerState=d;const sel=document.getElementById('playerTeam'),old=sel.value;sel.innerHTML=d.teams.map(t=>`<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');if(d.teams.some(t=>String(t.id)===old))sel.value=old;refreshPlayer()}});playerConn.on('close',()=>{playerJoined=false;document.getElementById('playerStatus').textContent='Verbindung getrennt. Seite neu laden.';refreshPlayer()});playerConn.on('error',()=>{document.getElementById('playerStatus').textContent='Quizmaster nicht erreichbar.';refreshPlayer()})});livePeer.on('error',e=>{document.getElementById('playerStatus').textContent='Verbindungsfehler: '+e.type;refreshPlayer()})}
+function joinLiveBuzzer(){if(!playerConn?.open||!playerState)return;playerTeamIndex=Number(document.getElementById('playerTeam').value);if(!playerState.teams.some(t=>t.id===playerTeamIndex))return;playerJoined=true;document.getElementById('playerTeam').disabled=true;document.getElementById('playerName').disabled=true;document.getElementById('joinBuzzerBtn').disabled=true;refreshPlayer()}
+function refreshPlayer(){const b=document.getElementById('playerBuzzBtn');if(!b)return;const s=playerState,excluded=s?.excluded.includes(playerTeamIndex),winner=s?.winner;const enabled=!!(playerJoined&&playerConn?.open&&s?.questionOpen&&!s?.closed&&!winner&&!excluded);b.disabled=!enabled;const label=document.getElementById('playerStatus');if(!playerConn?.open)return;if(!playerJoined){label.textContent='Verbunden – wähle dein Team und drücke Verbinden.';return}if(!s?.questionOpen)label.textContent='Warte auf die nächste Frage …';else if(s.closed)label.textContent='Runde beendet.';else if(excluded)label.textContent='Dein Team hat falsch geantwortet und ist für diese Frage gesperrt.';else if(winner)label.textContent=winner.team===playerTeamIndex?'Dein Team ist dran!':'🔒 '+winner.name+' war zuerst. Bitte warten.';else label.textContent='🟢 Buzzer ist frei!'}
+function sendLiveBuzz(){if(!playerJoined||!playerConn?.open||!playerState?.questionOpen||playerState.winner||playerState.closed||playerState.excluded.includes(playerTeamIndex))return;document.getElementById('playerBuzzBtn').disabled=true;playerConn.send({type:'buzz',team:playerTeamIndex,name:document.getElementById('playerName').value.trim()||playerState?.teams.find(t=>t.id===playerTeamIndex)?.name||'Spieler'})}
+// Preserve existing quiz functions and synchronize the buzzer on question changes.
+const originalOpenQuestion=openQuestion;openQuestion=function(i){originalOpenQuestion(i);resetLiveBuzz()};
+const originalCloseQuestion=closeQuestion;closeQuestion=function(){originalCloseQuestion();liveRound++;liveWinner=null;liveExcluded.clear();liveClosed=true;broadcastLive()};
+const originalRenderTeams=renderTeams;renderTeams=function(){originalRenderTeams();if(livePeer?.open&&!isPlayerMode)broadcastLive()};
+if(isPlayerMode)initPlayerMode();
+</script>
+</body>
+</html>
